@@ -8,20 +8,23 @@
 
 import Foundation
 
-struct PostTopLevelObject: Codable {
-    let data: PostSecondLevelObject
-}
-
-struct PostSecondLevelObject: Codable {
-    let children: [PostThirdLevelObject]
-}
-
-struct PostThirdLevelObject: Codable {
-    let data: Post
-}
-
-struct Post: Codable {
+struct Post {
     let title: String
     let ups: Int
     let thumbnail: String
+}
+
+extension Post {
+    
+    init?(dictionary: [String : Any]) {
+        
+        guard let dataDictionary = dictionary["data"] as? [String : Any],
+            let title = dataDictionary["title"] as? String,
+            let ups = dataDictionary["ups"] as? Int,
+            let thumbnail = dataDictionary["thumbnail"] as? String else { return nil }
+        
+        self.title = title
+        self.ups = ups
+        self.thumbnail = thumbnail
+    }
 }

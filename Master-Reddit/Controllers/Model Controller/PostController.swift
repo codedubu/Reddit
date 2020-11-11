@@ -26,22 +26,19 @@ class PostController {
             
             guard let data = data else { return completion(.failure(.noData)) }
             
-            do {
-                let topLevelDictionary = try JSONDecoder().decode(PostTopLevelObject.self, from: data)
-                let secondLevelDict = topLevelDictionary.data
-                let thirdLevelArray = secondLevelDict.children
-                
-                var arrayOfPosts: [Post] = []
-                
-                for dict in thirdLevelArray {
-                    let post = dict.data
+            guard let topLevelDictionary = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String : Any],
+                  let dataDictionary = topLevelDictionary["data"] as? [String : Any],
+                  let childrenArray = dataDictionary["children"] as? [[String : Any]] else { return completion(.failure(.unableToDecode)) }
+            
+            var arrayOfPosts: [Post] = []
+            
+            for dict in childrenArray {
+                if let post = Post(dictionary: dict) {
                     arrayOfPosts.append(post)
                 }
-                return completion(.success(arrayOfPosts))
-            } catch {
-                print(error.localizedDescription)
-                return completion(.failure(.thrownError(error)))
             }
+            return completion(.success(arrayOfPosts))
+            
         }.resume()
     }
     
