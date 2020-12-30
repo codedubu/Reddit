@@ -40,22 +40,7 @@ class PostListTableViewController: UITableViewController {
 
         let post = self.posts[indexPath.row]
         
-        cell.postCellTitleLabel.text = post.title
-        cell.postCellUPSLabel.text = "UPS: \(post.ups)"
-        cell.postCellImageView.image = nil
-        
-        PostController.fetchThumbnail(post: post) { (result) in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let thumbnail):
-                    cell.postCellImageView.image = thumbnail
-                    print("got image")
-                case .failure(let error):
-                    print(error.errorDescription)
-                    cell.postCellImageView.image = UIImage(named: "imageNotAvailable")
-                }
-            }
-        }
+        cell.post = post
 
         return cell
     }
